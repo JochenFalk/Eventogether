@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageHolderSender"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/messageLoaderSender"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="20dp"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toEndOf="@+id/messengerImageViewSender"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/messageTextViewSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/rounded_message_dark_blue"
+            android:gravity="start"
+            android:maxWidth="275dp"
+            android:minWidth="45dp"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@+id/messengerImageViewSender"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="This is a message" />
+
+        <TextView
+            android:id="@+id/messengerTextViewSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintStart_toStartOf="@+id/messageTextViewSender"
+            app:layout_constraintTop_toBottomOf="@+id/messageTextViewSender"
+            tools:text="FirstName LastName" />
+
+        <ImageView
+            android:id="@+id/messengerImageViewSender"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/profile_picture"
+            android:scaleType="fitXY"
+            android:src="@drawable/bot_dark_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageHolderReceiver"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/messageLoaderReceiver"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="20dp"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toStartOf="@+id/messengerImageViewReceiver"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/messageTextViewReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_message_light_blue"
+            android:gravity="start"
+            android:maxWidth="275dp"
+            android:minWidth="45dp"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/messengerImageViewReceiver"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="This is a message" />
+
+        <TextView
+            android:id="@+id/messengerTextViewReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintEnd_toEndOf="@+id/messageTextViewReceiver"
+            app:layout_constraintTop_toBottomOf="@+id/messageTextViewReceiver"
+            tools:text="FirstName LastName" />
+
+        <ImageView
+            android:id="@+id/messengerImageViewReceiver"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/profile_picture"
+            android:scaleType="fitCenter"
+            android:src="@drawable/profile_light_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ImageContrastCheck" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

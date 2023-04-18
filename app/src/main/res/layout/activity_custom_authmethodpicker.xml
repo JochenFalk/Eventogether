@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingTop="75dp"
+    android:paddingRight="20dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/text_company_logo"
+        android:src="@drawable/default_logo_square" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/calibri"
+        android:includeFontPadding="false"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:shadowColor="@color/black"
+        android:text="@string/text_login_method"
+        android:textAlignment="center"
+        android:textColor="@color/blue"
+        android:textSize="23sp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        app:cardCornerRadius="0dp">
+
+        <Button
+            android:id="@+id/btnSignInEmail"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:fontFamily="@font/calibri"
+            android:gravity="start|center_vertical"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="50dp"
+            android:paddingEnd="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/sign_in_text_email"
+            android:textAllCaps="false"
+            app:cornerRadius="0dp"
+            app:iconPadding="0dp"
+            app:iconTint="@color/light_blue" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="@color/light_blue"
+            android:scaleType="fitCenter"
+            android:src="@drawable/email_signin_button_transpant_backgroung"
+            app:shapeAppearanceOverlay="@style/diagonal_corner_cut1" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp">
+
+        <Button
+            android:id="@+id/btnSignInGoogle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:fontFamily="@font/calibri"
+            android:gravity="start|center_vertical"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="50dp"
+            android:paddingEnd="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/sign_in_text_google"
+            android:textAllCaps="false"
+            app:cornerRadius="0dp"
+            app:iconPadding="0dp"
+            app:iconTint="@color/light_blue" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="@color/light_blue"
+            android:scaleType="fitCenter"
+            android:src="@drawable/google_signin_button_transpant_backgroung"
+            android:tint="@color/white"
+            app:shapeAppearanceOverlay="@style/diagonal_corner_cut1" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:id="@+id/textViewTOS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:fontFamily="@font/calibri"
+            android:text="@string/text_terms_of_service"
+            android:textColor="@color/dark_blue"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textViewPrivacy"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:layout_width="125dp"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:text="@string/hyperlink_tos"
+            android:textSize="0sp"
+            android:autoLink="web"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textViewPrivacy"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/textViewPrivacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/calibri"
+            android:text="@string/text_privacy"
+            android:textColor="@color/dark_blue"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/textViewTOS"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:layout_width="125dp"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:text="@string/hyperlink_privacy"
+            android:textSize="0sp"
+            android:autoLink="web"
+            app:layout_constraintStart_toEndOf="@+id/textViewTOS"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+    tools:context=".activities.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topGroup"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/imageHolderMainHero"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/itemImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/friends_running_down_hill_outdoor_field"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="0dp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnForwardHolder"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                app:cardCornerRadius="250dp"
+                app:layout_constraintBottom_toBottomOf="@id/imageHolderMainHero"
+                app:layout_constraintEnd_toEndOf="@id/imageHolderMainHero"
+                app:layout_constraintTop_toTopOf="@id/imageHolderMainHero">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnForward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/blue"
+                    android:contentDescription="@string/text_next_item"
+                    android:insetLeft="-9dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/ic_baseline_arrow_forward_ios_24"
+                    app:iconSize="25dp"
+                    app:shapeAppearanceOverlay="@style/button_rounded"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnBackHolder"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="10dp"
+                app:cardCornerRadius="250dp"
+                app:layout_constraintBottom_toBottomOf="@id/imageHolderMainHero"
+                app:layout_constraintStart_toStartOf="@+id/imageHolderMainHero"
+                app:layout_constraintTop_toTopOf="@id/imageHolderMainHero">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/blue"
+                    android:contentDescription="@string/text_previous_item"
+                    android:insetLeft="-6dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/ic_baseline_arrow_back_ios_24"
+                    app:iconSize="25dp"
+                    app:shapeAppearanceOverlay="@style/button_rounded"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/middleGroup1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-40dp"
+            android:paddingTop="15dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:background="@drawable/rounded_layout"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topGroup">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnEventsHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:outlineSpotShadowColor="@android:color/transparent"
+                app:cardCornerRadius="25dp"
+                tools:targetApi="p">
+
+                <Button
+                    android:id="@+id/btnEvents"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="50dp"
+                    android:paddingEnd="0dp"
+                    android:background="@drawable/round_button_no_border_effect"
+                    app:backgroundTint="@color/green_alfa"
+                    android:fontFamily="@font/calibri"
+                    android:text="@string/btnAppointments_title"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="@string/text_icon"
+                    android:src="@drawable/ic_baseline_event_note_24"
+                    app:tint="@color/dark_blue" />
+
+                <ImageView
+                    android:id="@+id/btnEventsForward"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="@string/text_continue"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnEventSearchHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:outlineSpotShadowColor="@android:color/transparent"
+                app:cardCornerRadius="25dp"
+                tools:targetApi="p">
+
+                <Button
+                    android:id="@+id/btnEventSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="50dp"
+                    android:paddingEnd="0dp"
+                    android:background="@drawable/round_button_no_border_effect"
+                    app:backgroundTint="@color/green_alfa"
+                    android:fontFamily="@font/calibri"
+                    android:text="@string/search_bar_text"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="@string/text_icon"
+                    android:src="@drawable/ic_baseline_search_24"
+                    app:tint="@color/dark_blue" />
+
+                <ImageView
+                    android:id="@+id/btnEventSearchForward"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="@string/text_continue"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnChatHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:outlineSpotShadowColor="@android:color/transparent"
+                app:cardCornerRadius="25dp"
+                tools:targetApi="p">
+
+                <Button
+                    android:id="@+id/btnChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="50dp"
+                    android:paddingEnd="0dp"
+                    android:background="@drawable/round_button_no_border_effect"
+                    app:backgroundTint="@color/green_alfa"
+                    android:fontFamily="@font/calibri"
+                    android:text="@string/btnChat_title"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="@string/text_icon"
+                    android:src="@drawable/ic_baseline_chat_24"
+                    app:tint="@color/dark_blue" />
+
+                <ImageView
+                    android:id="@+id/btnChatForward"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="@string/text_continue"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnScanHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:outlineSpotShadowColor="@android:color/transparent"
+                app:cardCornerRadius="25dp"
+                tools:targetApi="p">
+
+                <Button
+                    android:id="@+id/btnScan"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="50dp"
+                    android:paddingEnd="0dp"
+                    android:background="@drawable/round_button_no_border_effect"
+                    app:backgroundTint="@color/green_alfa"
+                    android:fontFamily="@font/calibri"
+                    android:text="@string/btnScan_title"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="@string/text_icon"
+                    android:src="@drawable/ic_baseline_center_focus_weak_24"
+                    app:tint="@color/dark_blue" />
+
+                <ImageView
+                    android:id="@+id/btnScanForward"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="@string/text_continue"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomGroup"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="0dp"
+            android:paddingBottom="10dp" >
+
+            <TextView
+                android:id="@+id/eventsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:fontFamily="@font/calibri"
+                android:text="@string/text_popular_events"
+                android:textColor="@color/blue"
+                android:textSize="25sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/horizontalRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="0dp"
+                android:overScrollMode="never"
+                tools:orientation="horizontal"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/card_design_event_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventsTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

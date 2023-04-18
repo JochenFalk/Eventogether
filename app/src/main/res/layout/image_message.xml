@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageHolderSender"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/messageLoaderSender"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="20dp"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@+id/messengerImageViewSender"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/messageImageViewSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/text_picture"
+            android:gravity="center"
+            android:maxWidth="300dp"
+            android:maxHeight="200dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="0dp"
+            android:paddingStart="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toEndOf="@+id/messengerImageViewSender"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@android:drawable/ic_menu_gallery" />
+
+        <TextView
+            android:id="@+id/messengerTextViewSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="0dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintStart_toStartOf="@+id/messageImageViewSender"
+            app:layout_constraintTop_toBottomOf="@+id/messageImageViewSender"
+            tools:text="FirstName LastName" />
+
+        <ImageView
+            android:id="@+id/messengerImageViewSender"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="15dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/profile_picture"
+            android:scaleType="fitXY"
+            android:src="@drawable/bot_dark_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageHolderReceiver"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/messageLoaderReceiver"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="20dp"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/messengerImageViewReceiver"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/messageImageViewReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/text_picture"
+            android:gravity="center"
+            android:maxWidth="300dp"
+            android:maxHeight="200dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="0dp"
+            android:paddingStart="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toStartOf="@+id/messengerImageViewReceiver"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@android:drawable/ic_menu_gallery" />
+
+        <TextView
+            android:id="@+id/messengerTextViewReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingStart="0dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintEnd_toEndOf="@id/messageImageViewReceiver"
+            app:layout_constraintTop_toBottomOf="@+id/messageImageViewReceiver"
+            tools:text="FirstName LastName" />
+
+        <ImageView
+            android:id="@+id/messengerImageViewReceiver"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/profile_picture"
+            android:scaleType="fitCenter"
+            android:src="@drawable/profile_light_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
