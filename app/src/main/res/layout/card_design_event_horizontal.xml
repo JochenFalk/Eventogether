@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -19,24 +18,24 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"
         app:cardElevation="5dp"
-        app:cardCornerRadius="20dp"
-        tools:targetApi="p">
+        app:cardCornerRadius="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/eventImage"
                 android:layout_width="130dp"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:paddingStart="0dp"
-                android:paddingEnd="50dp"
-                android:contentDescription="@string/text_popular_events"
+                android:paddingEnd="0dp"
+                android:contentDescription="@string/text_nearby_events"
                 android:scaleType="centerCrop"
-                android:src="@drawable/girl_with_basketball_fence"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
                 android:id="@+id/eventTitle"
@@ -45,7 +44,7 @@
                 android:padding="10dp"
                 android:fontFamily="@font/calibri"
                 android:gravity="start|center_vertical"
-                android:text="@{event.name}"
+                android:text="@{event.info.title}"
                 android:textColor="@color/dark_blue"
                 android:textSize="16sp"
                 android:singleLine="true"
@@ -64,7 +63,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="15dp"
-                android:text="@{event.description}"
+                android:text="@{event.info.description}"
                 android:textColor="@color/dark_blue_faded"
                 android:textSize="12sp"
                 android:maxLines="2"
@@ -81,7 +80,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Friday, 21st of April"
+                android:text="@{event.info.timeString}"
                 android:textColor="@color/dark_blue"
                 android:textSize="12sp"
                 android:maxLines="1"

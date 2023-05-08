@@ -10,7 +10,13 @@ import java.lang.Long.getLong
 object SharedPreferencesHelper {
 
     private lateinit var sharedPreferences: SharedPreferences
+
     private const val TAG = "SharedPreferencesHelper"
+
+    const val TYPE_STRING = "STRING"
+    const val TYPE_INT = "INT"
+    const val TYPE_DOUBLE = "DOUBLE"
+    const val TYPE_LONG = "LONG"
 
     fun savePreferences(
         activity: Activity,
@@ -18,7 +24,8 @@ object SharedPreferencesHelper {
         key: String,
         stringValue: String? = null,
         intValue: Int? = null,
-        doubleValue: Double? = null
+        doubleValue: Double? = null,
+        longValue: Long? = null
     ) {
         sharedPreferences =
             activity.getSharedPreferences(setName, Context.MODE_PRIVATE)
@@ -33,6 +40,9 @@ object SharedPreferencesHelper {
         }
         if (doubleValue != null ) {
             editor.putLong(key, java.lang.Double.doubleToRawLongBits(doubleValue))
+        }
+        if (longValue != null) {
+            editor.putLong(key, longValue)
         }
 
         editor.apply()
@@ -51,21 +61,21 @@ object SharedPreferencesHelper {
 
         when (type) {
 
-            "STRING" -> {
+            TYPE_STRING -> {
                 try {
-                    return sharedPreferences.getString(key, null).toString()
+                    return sharedPreferences.getString(key, null)
                 } catch (ex: Exception) {
                     Log.d(TAG,"Preference not found: $ex")
                 }
             }
-            "INT" -> {
+            TYPE_INT -> {
                 try {
                     return sharedPreferences.getInt(key, 0)
                 } catch (ex: Exception) {
                     Log.d(TAG,"Preference not found: $ex")
                 }
             }
-            "DOUBLE" -> {
+            TYPE_DOUBLE -> {
                 try {
                     return getLong(
                         key,
@@ -77,12 +87,19 @@ object SharedPreferencesHelper {
                     Log.d(TAG,"Preference not found: $ex")
                 }
             }
+            TYPE_LONG -> {
+                try {
+                    return sharedPreferences.getLong(key, 0)
+                } catch (ex: Exception) {
+                    Log.d(TAG,"Preference not found: $ex")
+                }
+            }
             else -> {
                 Log.d(TAG,"Incompatible type specified")
             }
         }
 
-        return Unit
+        return null
     }
 
     fun clearPreferences(activity: Activity, setName: String) {

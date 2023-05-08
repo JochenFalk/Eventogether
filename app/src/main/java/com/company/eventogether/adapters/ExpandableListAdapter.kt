@@ -37,7 +37,7 @@ class ExpandableListAdapter : ExpandableAdapter<ExpandableAdapter.ViewHolder>() 
         val item = listGroups[groupPosition].items?.get(childPosition)
         if (payloads.isEmpty()) {
             (holder as? ItemViewHolder)?.apply {
-                listItemBinding.textViewItem.text = item
+                listItemBinding.textViewItem.text = item.toString()
             }
         }
     }

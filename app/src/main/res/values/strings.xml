@@ -2,11 +2,11 @@
     <string name="app_name">Eventogether</string>
     <string name="text_company_logo">Company logo</string>
     <string name="text_icon">Icon</string>
-    <string name="btnAppointments_title">Create an event</string>
-    <string name="btnScan_title">Scan a promotional code</string>
-    <string name="btnChat_title">Enter locale chat</string>
-    <string name="search_bar_text">Search events near you</string>
-    <string name="text_popular_events">Popular events near you</string>
+    <string name="btnAppointments_title">Creeër een evenement</string>
+    <string name="btnScan_title">Scan een promotie code</string>
+    <string name="btnChat_title">Open locale chat</string>
+    <string name="search_bar_text">Zoek naar evenement</string>
+    <string name="text_nearby_events">Evenementen bij jou in de buurt</string>
     <string name="text_search">Search</string>
     <string name="btnPopular1_title">Popular event 1</string>
     <string name="text_profile_icon">Profile icon</string>

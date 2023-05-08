@@ -1,6 +1,5 @@
 package com.company.eventogether
 
-import java.util.*
 object AppSettings {
 
     const val SERP_API_BASE_URL = "https://serpapi.com"
@@ -8,5 +7,5 @@ object AppSettings {
     const val PRIVACY_URL = "https://"
     const val TOS_URL = "https://"
 
-    val APP_LOCAL: Locale = Locale.GERMAN
+    const val EVENT_UPDATE_PERIOD_IN_MILLIS = 10*86400000 // 86400000 == 24 hours
 }

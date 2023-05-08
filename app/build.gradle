@@ -22,6 +22,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SERP_API_KEY", apikeyProperties['SERP_API_KEY'])
         buildConfigField("String", "GOOGLE_GEO_API_KEY", apikeyProperties['GOOGLE_GEO_API_KEY'])
+        buildConfigField("String", "GOOGLE_PLACES_API_KEY", apikeyProperties['GOOGLE_PLACES_API_KEY'])
     }
 
     buildFeatures {

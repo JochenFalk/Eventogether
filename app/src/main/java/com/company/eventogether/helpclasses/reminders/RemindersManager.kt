@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.company.eventogether.AppSettings.APP_LOCAL
 import java.util.*
 
 class RemindersManager {
@@ -43,7 +42,7 @@ class RemindersManager {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        if (calendar.timeInMillis - Calendar.getInstance(APP_LOCAL).timeInMillis < 0) {
+        if (calendar.timeInMillis - Calendar.getInstance(Locale.getDefault()).timeInMillis < 0) {
             calendar.add(Calendar.DATE, 1)
         }
 

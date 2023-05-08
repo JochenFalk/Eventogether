@@ -19,6 +19,6 @@ val koinViews = module {
         EventViewModel(get())
     }
     viewModel {
-        LocationViewModel()
+        LocationViewModel(get())
     }
 }

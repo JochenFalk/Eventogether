@@ -1,10 +1,12 @@
-package com.company.eventogether.model
+package com.company.eventogether.model.geosearches
+
 import com.fasterxml.jackson.annotation.JsonProperty
 
-
-data class ReverseGeoSearch(
+data class GeoSearch(
     @JsonProperty("results")
-    val results: List<Result?>? = null
+    val results: List<Result?>? = null,
+    @JsonProperty("status")
+    val status: String? = null
 )
 
 data class Result(
@@ -16,6 +18,8 @@ data class Result(
     val geometry: Geometry? = null,
     @JsonProperty("place_id")
     val placeId: String? = null,
+    @JsonProperty("plus_code")
+    val plusCode: PlusCode? = null,
     @JsonProperty("types")
     val types: List<String?>? = null
 )
@@ -36,6 +40,13 @@ data class Geometry(
     val locationType: String? = null,
     @JsonProperty("viewport")
     val viewport: Viewport? = null
+)
+
+data class PlusCode(
+    @JsonProperty("compound_code")
+    val compoundCode: String? = null,
+    @JsonProperty("global_code")
+    val globalCode: String? = null
 )
 
 data class Location(

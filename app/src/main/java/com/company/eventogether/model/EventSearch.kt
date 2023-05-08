@@ -1,5 +1,7 @@
 package com.company.eventogether.model
+
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class EventSearch(
     @JsonProperty("events_results")
@@ -104,4 +106,4 @@ data class Venue(
     val rating: Double? = null,
     @JsonProperty("reviews")
     val reviews: Int? = null
-)
+) : Serializable

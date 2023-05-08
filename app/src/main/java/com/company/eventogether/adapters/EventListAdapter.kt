@@ -2,7 +2,10 @@ package com.company.eventogether.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
+import com.company.eventogether.R
 import com.company.eventogether.databinding.CardDesignEventBinding
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.company.eventogether.model.EventDTO
@@ -15,11 +18,15 @@ class EventListAdapter(private val viewModel: EventViewModel) :
         ViewHolder(binding.root) {
 
         fun bind(event: EventDTO) {
+
             binding.event = event
             binding.cardView.setOnClickListener {
                 viewModel.eventObservable.value = event
                 viewModel.remindersObservable.value = event.reminders
             }
+            binding.eventTitle.isSelected = true
+
+            setEventImage(binding.eventImage, event)
         }
     }
 
@@ -32,5 +39,23 @@ class EventListAdapter(private val viewModel: EventViewModel) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, event: EventDTO) {
         (holder as EventViewHolder).bind(event)
+    }
+
+    private fun setEventImage(imageView: ImageView, event: EventDTO) {
+
+        val eventImageUrl = event.links?.eventImageUrl
+        val venueImageUrl = event.info?.venue?.link
+
+        if (eventImageUrl != null) {
+            Glide.with(imageView.context)
+                .load(eventImageUrl)
+                .into(imageView)
+        } else if (venueImageUrl != null){
+            Glide.with(imageView.context)
+                .load(venueImageUrl)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.friends_running_down_hill_outdoor_field)
+        }
     }
 }

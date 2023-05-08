@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.company.eventogether.R
 import com.company.eventogether.adapters.ExpandableListAdapter
 import com.company.eventogether.databinding.FragmentFocusEventBinding
@@ -67,15 +69,12 @@ class FocusEventFragment : Fragment() {
             )
         }
 
-        binding.btnForward.setOnClickListener {
-            callReminderListFragment()
-        }
+        binding.switchRecurring.setOnClickListener {
 
-        binding.textViewReminder.setOnClickListener {
-            callReminderListFragment()
         }
 
         setObservers()
+        setEventImage(binding.eventImage, event.links?.eventImageUrl)
     }
 
     private fun setObservers() {
@@ -100,6 +99,17 @@ class FocusEventFragment : Fragment() {
                 eventViewModel.eventObservable.value = null
                 parentFragmentManager.popBackStack()
             }
+        }
+    }
+
+    private fun setEventImage(imageView: ImageView, url: String?) {
+
+        if (url != null) {
+            Glide.with(imageView.context)
+                .load(url)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.friends_running_down_hill_outdoor_field)
         }
     }
 

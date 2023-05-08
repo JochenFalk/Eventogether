@@ -1,27 +1,31 @@
 package com.company.eventogether.viewmodels
 
 import android.content.Context
-import android.location.Location
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.company.eventogether.R
 import com.company.eventogether.helpclasses.StringResourcesProvider
+import com.company.eventogether.helpclasses.Tools
+import com.company.eventogether.helpclasses.Tools.convertSerpApiDateToTimeInMillis
 import com.company.eventogether.helpclasses.Tools.getTimeArray
-import com.company.eventogether.helpclasses.Tools.getTimeStringHHMM
+import com.company.eventogether.helpclasses.Tools.getLocalTimeStringHHMM
 import com.company.eventogether.helpclasses.reminders.RemindersManager
 import com.company.eventogether.model.*
 import com.company.eventogether.repositories.EventRepository
+import com.company.eventogether.repositories.LocationRepository
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
+import java.util.Date
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : ViewModel() {
 
@@ -38,12 +42,12 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
     var isEventDeletedSuccess: MutableLiveData<Boolean> = MutableLiveData()
 
     private val eventRepository: EventRepository by inject(EventRepository::class.java)
+    private val locationRepository: LocationRepository by inject(LocationRepository::class.java)
     private val stringResourcesProvider: StringResourcesProvider by inject(StringResourcesProvider::class.java)
     private val remindersManager: RemindersManager by inject(RemindersManager::class.java)
 
     init {
         initiateDatabaseReference()
-        updateEvents()
     }
 
     companion object {
@@ -51,73 +55,164 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         private const val TAG_TIME_PICKER = "ReminderTimePicker"
         const val EVENTS_CHILD = "events"
         const val REMINDERS_CHILD = "reminders"
+        const val USERS_PARENT = "users"
     }
 
     fun getOptions(): FirebaseRecyclerOptions<EventDTO> {
         return options
     }
 
-    private fun updateEvents() {
+    fun updateEvents(
+        context: Context,
+        type: EventType,
+        location: LocationDTO,
+        callback: (Boolean?) -> Unit
+    ) {
 
-        eventRepository.retrieveEvents { eventSearch ->
+        val currentDate = Date()
+        val loadedEvents = ArrayList<EventDTO>()
+
+        loadAllEvent { events ->
+
+            eventRepository.retrieveEvents(type.name, location) { eventSearch ->
+
+                if (events != null && events.size != 0) {
+
+                    loadedEvents.addAll(events)
+
+                    events.forEach { event ->
+
+                        event.info?.timeInMillis.let { eventTimeInMillis ->
+
+                            val eventDate = eventTimeInMillis?.let { Date(it) }
+
+                            if (eventDate != null) {
+                                if (eventDate.before(currentDate)) {
+                                    deleteEvent(context, event)
+                                    loadedEvents.remove(event)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (eventSearch != null) {
 
+                    eventSearch.eventsResults?.forEach { event ->
+
+                        if (event != null) {
+
+                            val timeInMillis =
+                                event.date?.let { convertSerpApiDateToTimeInMillis(it) }
+                            val date = timeInMillis?.let { Date(it) }
+                            val pattern = "EEEE dd MMM' 'HH:mm"
+                            val timeString = date?.let { dateToFormat ->
+                                Tools.formatDateToTimeString(
+                                    dateToFormat,
+                                    pattern
+                                ).also { Tools.capitalizeString(it) }
+                            }
+
+                            EventDTO(
+                                info = InfoDTO(
+                                    title = event.title,
+                                    description = event.description,
+                                    location = location,
+                                    timeInMillis = timeInMillis,
+                                    timeString = timeString,
+                                    venue = event.venue
+                                ),
+                                links = LinksDTO(
+                                    eventLink = event.link,
+                                    eventImageUrl = event.image,
+                                    eventThumbnailUrl = event.thumbnail,
+                                    ticketUrl = event.ticketInfo?.get(0)?.link
+                                ),
+                                metadata = MetaDataDTO(
+                                    owner = null,
+                                    visibility = EventVisibility.PUBLIC,
+                                    eventType = type,
+                                    creationTimeInMillis = Calendar.getInstance().timeInMillis
+                                ),
+                                followers = ArrayList<String>().apply {
+                                    userProfileViewModel.getCurrentUser()
+                                        ?.let { this.add(it.uid) }
+                                }
+                            ).also { newEvent ->
+
+                                var isFound = false
+
+                                if (loadedEvents.size != 0) {
+
+                                    loadedEvents.forEach { loadedEvent ->
+                                        if (loadedEvent.info == newEvent.info) {
+                                            if (isFound) {
+                                                deleteEvent(context, loadedEvent)
+                                            } else {
+                                                isFound = true
+                                            }
+                                        }
+                                    }
+
+                                    if (!isFound) addEvent(newEvent) { callback(it) }
+                                } else {
+                                    addEvent(newEvent) { callback(it) }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
+        }
     }
 
-    fun retrieveEvent(byteArray: ByteArray?) {
+    private fun addEvent(event: EventDTO, callback: (Boolean?) -> Unit) {
 
-//        if (byteArray != null) {
-//            eventRepository.retrieveEvent(byteArray) { event ->
-//                if (event != null) {
-//                    addEvent(event.convertToEventDTO())
-//                    isDataLoaded.value = true
-//                }
-//            }
-//        }
-
-        val testEvent = Event(
-            eventName = "Cool stuff",
-            eventDescription = "In excepteur laborum exercitation velit minim laborum irure id duis.",
-            eventInfo1 = EventInfo1(
-                location = "Maastricht"
-            ),
-            eventInfo2 = EventInfo2(
-                time = "10:00"
-            ),
-            eventInfo3 = ArrayList<EventInfo3>().apply {
-                add(
-                    EventInfo3(
-                        route = "Turn right",
-                        regions = "Maastricht"
-                    )
-                )
-                add(
-                    EventInfo3(
-                        route = "Turn left",
-                        regions = "Maastricht"
-                    )
-                )
+        try {
+            val uid = userProfileViewModel.getCurrentUser()?.uid
+            db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").push().apply {
+                event.fbKey = key
+                setValue(event)
+                    .addOnSuccessListener {
+                        isEventAddedSuccess.value = true
+                        callback(true)
+                        Log.d(TAG, "Event added: ${event.info?.title}")
+                    }
             }
-
-        )
-        isDataLoaded.value = true
-        addEvent(testEvent.convertToEventDTO())
+        } catch (e: Exception) {
+            Log.d(TAG, "A problem occurred while adding event: $e")
+        }
     }
 
-    fun getAllLocalEvents(callback: (ArrayList<EventDTO>?) -> Unit) {
+    private fun loadAllEvent(callback: (ArrayList<EventDTO>?) -> Unit) {
 
+        try {
+            val uid = userProfileViewModel.getCurrentUser()?.uid
+            db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").get()
+                .addOnSuccessListener {
 
+                    val genericTypeIndicator: GenericTypeIndicator<HashMap<String, EventDTO>> =
+                        object : GenericTypeIndicator<HashMap<String, EventDTO>>() {}
 
+                    val eventMap = it.getValue(genericTypeIndicator)
+                    val eventList: ArrayList<EventDTO> = ArrayList()
+
+                    eventMap?.forEach { event ->
+                        eventList.add(event.value)
+                    }
+
+                    callback(eventList)
+                }
+        } catch (e: Exception) {
+            Log.d(TAG, "A problem occurred while loading events from database: $e")
+        }
     }
 
     fun loadEvent(fbKey: String, callback: (EventDTO?) -> Unit) {
 
         try {
             val uid = userProfileViewModel.getCurrentUser()?.uid
-            db.reference.child("/users/$uid/${EVENTS_CHILD}").child(fbKey).get()
+            db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").child(fbKey).get()
                 .addOnSuccessListener {
 
                     it.getValue(EventDTO::class.java).let { event ->
@@ -138,14 +233,44 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         try {
             val uid = userProfileViewModel.getCurrentUser()?.uid
             event?.fbKey?.let {
-                db.reference.child("/users/$uid/${EVENTS_CHILD}").child(it).removeValue()
+                db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").child(it)
+                    .removeValue()
                     .addOnSuccessListener {
                         deleteAllReminders(context, event)
                         isEventDeletedSuccess.value = true
+                        Log.d(TAG, "Event deleted: ${event.info?.title}")
                     }
             }
         } catch (e: Exception) {
             Log.d(TAG, "A problem occurred while deleting event: $e")
+        }
+    }
+
+    fun getEventLocationPhoto(location: LocationDTO, callback: (Any?) -> Unit) {
+
+        location.placeId?.let {
+            locationRepository.getPlaceDetails(it) { placeDetails ->
+
+                if (placeDetails != null) {
+                    placeDetails.result?.photos.let { photoList ->
+
+                        if (photoList != null && photoList.isNotEmpty()) {
+                            photoList[0]?.photoReference.let { photoRef ->
+
+                                if (photoRef != null) {
+                                    locationRepository.getPlaceImage(photoRef) { placePhoto ->
+
+                                        if (placePhoto != null) {
+                                            Log.d(TAG, "Photo: ${placePhoto.javaClass}")
+                                            callback(placePhoto)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -166,7 +291,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
 
-        reminder.timeString = getTimeStringHHMM(calendar.timeInMillis)
+        reminder.timeString = getLocalTimeStringHHMM(calendar.timeInMillis)
 
         val position = reminder.position
         val isRecurring = reminder.isRecurring
@@ -187,7 +312,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                         isRecurring = isRecurring,
                         title = title,
                         text = text,
-                        textBig = textBig + """ ${event.name}"""
+                        textBig = textBig + """ ${event.info?.title}"""
                     )
                 }
 
@@ -250,6 +375,33 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                 } else {
                     Log.d(TAG, "A problem occurred while processing reminder: $reminder")
                 }
+            }
+        }
+    }
+
+    private fun updateEventWithReminders(event: EventDTO) {
+
+        event.fbKey?.let { key ->
+
+            val list = ArrayList<ReminderDTO>()
+            val hashMap: HashMap<String, Any> = HashMap()
+
+            event.reminders?.forEach { reminder ->
+                list.add(reminder)
+            }
+            hashMap[REMINDERS_CHILD] = list
+
+            try {
+                val uid = userProfileViewModel.getCurrentUser()?.uid
+                db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").child(key)
+                    .updateChildren(hashMap)
+                    .addOnSuccessListener {
+                        event.reminders?.let {
+                            remindersObservable.value = it
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.d(TAG, "A problem occurred while updating reminders: $e")
             }
         }
     }
@@ -319,7 +471,10 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                             updateEventWithReminders(event)
                         }
                     } else {
-                        Log.d(TAG, "A problem occurred while processing reminder: $reminder")
+                        Log.d(
+                            TAG,
+                            "A problem occurred while processing reminder: $reminder"
+                        )
                     }
                 }
             }
@@ -350,109 +505,73 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
 
         try {
             val uid = userProfileViewModel.getCurrentUser()?.uid
-            db.reference.child("/users/$uid/${EVENTS_CHILD}").get().addOnCompleteListener { snapshot1 ->
-                if (snapshot1.isSuccessful) {
-                    val events = snapshot1.result.children.mapNotNull { doc ->
-                        doc.getValue(EventDTO::class.java)
-                    }
+            db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}").get()
+                .addOnCompleteListener { snapshot1 ->
+                    if (snapshot1.isSuccessful) {
+                        val events = snapshot1.result.children.mapNotNull { doc ->
+                            doc.getValue(EventDTO::class.java)
+                        }
 
-                    events.forEach { event ->
+                        events.forEach { event ->
 
-                        event.fbKey?.let { fbKey ->
-                            db.reference.child("/users/$uid/${EVENTS_CHILD}").child(fbKey).child(REMINDERS_CHILD)
-                                .get()
-                                .addOnCompleteListener { snapshot2 ->
-                                    if (snapshot2.isSuccessful) {
-                                        val reminders =
-                                            snapshot2.result.children.mapNotNull { doc ->
-                                                doc.getValue(ReminderDTO::class.java)
-                                            }
+                            event.fbKey?.let { fbKey ->
+                                db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}")
+                                    .child(fbKey).child(REMINDERS_CHILD)
+                                    .get()
+                                    .addOnCompleteListener { snapshot2 ->
+                                        if (snapshot2.isSuccessful) {
+                                            val reminders =
+                                                snapshot2.result.children.mapNotNull { doc ->
+                                                    doc.getValue(ReminderDTO::class.java)
+                                                }
 
-                                        reminders.forEach { reminder ->
+                                            reminders.forEach { reminder ->
 
-                                            val isActive = reminder.isActive
-                                            val timeString = reminder.timeString
+                                                val isActive = reminder.isActive
+                                                val timeString = reminder.timeString
 
-                                            if (isActive == true && timeString != null) {
+                                                if (isActive == true && timeString != null) {
 
-                                                val timeArray = getTimeArray(timeString, ":")
-                                                val hours = timeArray[0].toInt()
-                                                val minutes = timeArray[1].toInt()
+                                                    val timeArray =
+                                                        getTimeArray(timeString, ":")
+                                                    val hours = timeArray[0].toInt()
+                                                    val minutes = timeArray[1].toInt()
 
-                                                Log.d(TAG, "Hours: $hours")
+                                                    Log.d(TAG, "Hours: $hours")
 
-                                                processReminder(
-                                                    context = context,
-                                                    hours = hours,
-                                                    minutes = minutes,
-                                                    event = event,
-                                                    reminder = reminder,
-                                                    type = "START"
-                                                ) { boolean ->
+                                                    processReminder(
+                                                        context = context,
+                                                        hours = hours,
+                                                        minutes = minutes,
+                                                        event = event,
+                                                        reminder = reminder,
+                                                        type = "START"
+                                                    ) { boolean ->
 
-                                                    if (boolean == false) {
-                                                        Log.d(
-                                                            TAG,
-                                                            "A problem occurred while processing reminder: $reminder"
-                                                        )
+                                                        if (boolean == false) {
+                                                            Log.d(
+                                                                TAG,
+                                                                "A problem occurred while processing reminder: $reminder"
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
+                                        } else {
+                                            Log.d(
+                                                TAG,
+                                                snapshot2.exception?.message.toString()
+                                            )
                                         }
-                                    } else {
-                                        Log.d(TAG, snapshot2.exception?.message.toString())
                                     }
-                                }
+                            }
                         }
+                    } else {
+                        Log.d(TAG, snapshot1.exception?.message.toString())
                     }
-                } else {
-                    Log.d(TAG, snapshot1.exception?.message.toString())
                 }
-            }
         } catch (e: Exception) {
             Log.d(TAG, "A problem occurred while rescheduling reminders: $e")
-        }
-    }
-
-    private fun addEvent(event: EventDTO) {
-
-        try {
-            val uid = userProfileViewModel.getCurrentUser()?.uid
-            db.reference.child("/users/$uid/${EVENTS_CHILD}").push().apply {
-                event.fbKey = key
-                setValue(event)
-                    .addOnSuccessListener {
-                        isEventAddedSuccess.value = true
-                    }
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "A problem occurred while adding event: $e")
-        }
-    }
-
-    private fun updateEventWithReminders(event: EventDTO) {
-
-        event.fbKey?.let { key ->
-
-            val list = ArrayList<ReminderDTO>()
-            val hashMap: HashMap<String, Any> = HashMap()
-
-            event.reminders?.forEach { reminder ->
-                list.add(reminder)
-            }
-            hashMap[REMINDERS_CHILD] = list
-
-            try {
-                val uid = userProfileViewModel.getCurrentUser()?.uid
-                db.reference.child("/users/$uid/${EVENTS_CHILD}").child(key).updateChildren(hashMap)
-                    .addOnSuccessListener {
-                        event.reminders?.let {
-                            remindersObservable.value = it
-                        }
-                    }
-            } catch (e: Exception) {
-                Log.d(TAG, "A problem occurred while updating reminders: $e")
-            }
         }
     }
 
@@ -488,7 +607,9 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
 
         db = Firebase.database
         val uid = userProfileViewModel.getCurrentUser()?.uid
-        val eventsRef = db.reference.child("/users/$uid/${EVENTS_CHILD}")
+        val eventsRef = db.reference.child("/$USERS_PARENT/$uid/${EVENTS_CHILD}")
+            .orderByChild("info/timeInMillis")
+
         options = FirebaseRecyclerOptions.Builder<EventDTO>()
             .setQuery(eventsRef, EventDTO::class.java)
             .build()
