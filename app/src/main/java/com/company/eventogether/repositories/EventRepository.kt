@@ -61,8 +61,9 @@ class EventRepository {
 
         map["engine"] = GOOGLE_EVENTS
         map["q"] = "$type events in ${location.cityName}"
-        map["hl"] = Locale.getDefault().language.lowercase()
-        map["gl"] = Locale.getDefault().country.lowercase()
+//        // hl & gl currently not supported by google_events engine
+//        map["hl"] = Locale.getDefault().language.lowercase()
+//        map["gl"] = Locale.getDefault().country.lowercase()
         map["api_key"] = BuildConfig.SERP_API_KEY
 
         return map

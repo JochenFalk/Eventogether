@@ -1,6 +1,7 @@
 package com.company.eventogether.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,12 +32,17 @@ class FocusEventFragment : Fragment() {
     private val eventViewModel: EventViewModel by activityViewModel()
     private val adapter: ExpandableListAdapter by inject()
 
+    companion object {
+        private const val TAG = "FocusEventFragment"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         event = arguments?.getSerializable("Event") as EventDTO
         binding = FragmentFocusEventBinding.inflate(inflater, container, false)
+        Log.d(TAG, "Event loaded: $event")
         return binding.root
     }
 
