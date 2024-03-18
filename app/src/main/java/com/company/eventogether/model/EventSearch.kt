@@ -12,7 +12,7 @@ data class EventSearch(
     val searchMetadata: SearchMetadata? = null,
     @JsonProperty("search_parameters")
     val searchParameters: SearchParameters? = null
-)
+) : Serializable
 
 data class EventsResult(
     @JsonProperty("address")
@@ -35,12 +35,12 @@ data class EventsResult(
     val title: String? = null,
     @JsonProperty("venue")
     val venue: Venue? = null
-)
+) : Serializable
 
 data class SearchInformation(
     @JsonProperty("events_results_state")
     val eventsResultsState: String? = null
-)
+) : Serializable
 
 data class SearchMetadata(
     @JsonProperty("created_at")
@@ -59,7 +59,7 @@ data class SearchMetadata(
     val status: String? = null,
     @JsonProperty("total_time_taken")
     val totalTimeTaken: Double? = null
-)
+) : Serializable
 
 data class SearchParameters(
     @JsonProperty("engine")
@@ -70,14 +70,14 @@ data class SearchParameters(
     val locationUsed: String? = null,
     @JsonProperty("q")
     val q: String? = null
-)
+) : Serializable
 
 data class Date(
     @JsonProperty("start_date")
     val startDate: String? = null,
     @JsonProperty("when")
     val whenX: String? = null
-)
+) : Serializable
 
 data class EventLocationMap(
     @JsonProperty("image")
@@ -86,7 +86,7 @@ data class EventLocationMap(
     val link: String? = null,
     @JsonProperty("serpapi_link")
     val serpapiLink: String? = null
-)
+) : Serializable
 
 data class TicketInfo(
     @JsonProperty("link")
@@ -95,7 +95,7 @@ data class TicketInfo(
     val linkType: String? = null,
     @JsonProperty("source")
     val source: String? = null
-)
+) : Serializable
 
 data class Venue(
     @JsonProperty("link")

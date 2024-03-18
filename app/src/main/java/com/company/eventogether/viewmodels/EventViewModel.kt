@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.company.eventogether.AppSettings.TICKET_PROVIDERS
 import com.company.eventogether.R
 import com.company.eventogether.helpclasses.StringResourcesProvider
 import com.company.eventogether.helpclasses.Tools
@@ -33,10 +34,10 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
     private lateinit var options: FirebaseRecyclerOptions<EventDTO>
 
     var eventObservable: MutableLiveData<EventDTO> = MutableLiveData()
-    var remindersObservable: MutableLiveData<ArrayList<ReminderDTO>> = MutableLiveData()
-    var addReminderObservable: MutableLiveData<ReminderDTO> = MutableLiveData()
-    var deleteReminderObservable: MutableLiveData<ReminderDTO> = MutableLiveData()
-    var updateReminderObservable: MutableLiveData<ReminderDTO> = MutableLiveData()
+    var remindersObservable: MutableLiveData<ArrayList<EventReminderDTO>> = MutableLiveData()
+    var addReminderObservable: MutableLiveData<EventReminderDTO> = MutableLiveData()
+    var deleteReminderObservable: MutableLiveData<EventReminderDTO> = MutableLiveData()
+    var updateReminderObservable: MutableLiveData<EventReminderDTO> = MutableLiveData()
     var isDataLoaded: MutableLiveData<Boolean> = MutableLiveData()
     var isEventAddedSuccess: MutableLiveData<Boolean> = MutableLiveData()
     var isEventDeletedSuccess: MutableLiveData<Boolean> = MutableLiveData()
@@ -114,21 +115,27 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                             }
 
                             EventDTO(
-                                info = InfoDTO(
+                                info = EventInfoDTO(
                                     title = event.title,
                                     description = event.description,
-                                    location = location,
                                     timeInMillis = timeInMillis,
                                     timeString = timeString,
-                                    venue = event.venue
+                                    address = event.address,
+                                    ticketInfo = event.ticketInfo,
+                                    venue = EventVenue(
+                                        name = event.venue?.name,
+                                        rating = event.venue?.rating,
+                                        reviews = event.venue?.reviews,
+                                        thumbnailUrl = event.image
+                                    ),
+                                    thumbnailUrl = event.thumbnail,
+                                    links = EventLinks(
+                                        eventLink = event.link,
+                                        eventMapsUrl = event.eventLocationMap?.link,
+                                        eventMapsThumbnailUrl = event.eventLocationMap?.image
+                                    ),
                                 ),
-                                links = LinksDTO(
-                                    eventLink = event.link,
-                                    eventImageUrl = event.image,
-                                    eventThumbnailUrl = event.thumbnail,
-                                    ticketUrl = event.ticketInfo?.get(0)?.link
-                                ),
-                                metadata = MetaDataDTO(
+                                metadata = EventMetaDataDTO(
                                     owner = null,
                                     visibility = EventVisibility.PUBLIC,
                                     eventType = type,
@@ -140,12 +147,77 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                                 }
                             ).also { newEvent ->
 
+                                newEvent.expandableLists = ArrayList<EventExpandableGroup>().apply {
+
+                                    this.add(EventExpandableGroup().apply {
+
+                                        this.groupTitle =
+                                            stringResourcesProvider.getStringByName("event_expandable_list_group1_title")
+                                        this.groupItems = ArrayList<Any>().apply {
+
+                                            newEvent.info?.description?.let {
+                                                this.add(it)
+                                            }
+                                            newEvent.info?.description?.let {
+                                                val group1Identifier =
+                                                    stringResourcesProvider.getStringByName("event_expandable_list_group1_identifier")
+                                                this.add("$group1Identifier ${newEvent.info.links?.eventLink}")
+                                            }
+                                        }
+                                    })
+
+                                    this.add(EventExpandableGroup().apply {
+
+                                        this.groupTitle =
+                                            stringResourcesProvider.getStringByName("event_expandable_list_group2_title")
+                                        this.groupItems = ArrayList<Any>().apply {
+
+                                            newEvent.info?.venue.let {
+                                                this.add(it?.name.toString())
+                                            }
+                                            newEvent.info?.venue.let {
+                                                this.add("${it?.rating.toString()} ${it?.reviews.toString()}")
+                                            }
+                                            newEvent.info?.address.let { addressArray ->
+                                                this.add(
+                                                    addressArray!!
+                                                        .joinToString(separator = ", ")
+                                                        .replace(newEvent.info?.venue?.name!!, "")
+                                                        .drop(1)
+                                                        .trim()
+                                                )
+                                            }
+                                        }
+                                    })
+
+                                    this.add(EventExpandableGroup().apply {
+
+                                        this.groupTitle =
+                                            stringResourcesProvider.getStringByName("event_expandable_list_group3_title")
+                                        this.groupItems = ArrayList<Any>().apply {
+
+                                            newEvent.info?.ticketInfo.let { ticketInfoList ->
+
+                                                ticketInfoList!!.forEach { item ->
+
+                                                    val source = item?.source
+                                                    val link = item?.link
+
+                                                    if (TICKET_PROVIDERS.contains(source)) {
+                                                        this.add("${source.toString()} ${link.toString()}")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+
                                 var isFound = false
 
                                 if (loadedEvents.size != 0) {
 
                                     loadedEvents.forEach { loadedEvent ->
-                                        if (loadedEvent.info == newEvent.info) {
+                                        if (loadedEvent.info == newEvent.info || newEvent.info?.timeString == null || newEvent.info.timeString != "") {
                                             if (isFound) {
                                                 deleteEvent(context, loadedEvent)
                                             } else {
@@ -217,7 +289,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
 
                     it.getValue(EventDTO::class.java).let { event ->
                         if (event != null) {
-                            eventObservable.value = event
+                            eventObservable.value = event!!
                             remindersObservable.value = event.reminders!!
                             callback(event)
                         }
@@ -279,7 +351,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         hours: Int,
         minutes: Int,
         event: EventDTO,
-        reminder: ReminderDTO,
+        reminder: EventReminderDTO,
         type: String,
         callback: (Boolean?) -> Unit
     ) {
@@ -298,9 +370,9 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
 
         if (position != null && isRecurring != null) {
 
-            val title = stringResourcesProvider.getString(R.string.title_reminder)
-            val text = stringResourcesProvider.getString(R.string.text_reminder)
-            val textBig = stringResourcesProvider.getString(R.string.text_reminder_big)
+            val title = stringResourcesProvider.getStringByResId(R.string.title_reminder)
+            val text = stringResourcesProvider.getStringByResId(R.string.text_reminder)
+            val textBig = stringResourcesProvider.getStringByResId(R.string.text_reminder_big)
 
             when (type) {
 
@@ -329,7 +401,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         }
     }
 
-    fun createReminder(context: Context, event: EventDTO, reminder: ReminderDTO) {
+    fun createReminder(context: Context, event: EventDTO, reminder: EventReminderDTO) {
 
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -339,7 +411,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
             .setTimeFormat(TimeFormat.CLOCK_24H)
             .setHour(hour)
             .setMinute(minute)
-            .setTitleText(stringResourcesProvider.getString(R.string.time_picker_title_reminder))
+            .setTitleText(stringResourcesProvider.getStringByResId(R.string.time_picker_title_reminder))
             .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
             .build()
 
@@ -383,7 +455,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
 
         event.fbKey?.let { key ->
 
-            val list = ArrayList<ReminderDTO>()
+            val list = ArrayList<EventReminderDTO>()
             val hashMap: HashMap<String, Any> = HashMap()
 
             event.reminders?.forEach { reminder ->
@@ -406,7 +478,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         }
     }
 
-    fun deleteReminder(context: Context, event: EventDTO, reminder: ReminderDTO) {
+    fun deleteReminder(context: Context, event: EventDTO, reminder: EventReminderDTO) {
 
         reminder.timeString?.let { string ->
 
@@ -436,7 +508,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
         }
     }
 
-    fun updateReminder(context: Context?, event: EventDTO?, reminder: ReminderDTO) {
+    fun updateReminder(context: Context?, event: EventDTO?, reminder: EventReminderDTO) {
 
         if (context != null && event != null) {
 
@@ -522,7 +594,7 @@ class EventViewModel(private val userProfileViewModel: UserProfileViewModel) : V
                                         if (snapshot2.isSuccessful) {
                                             val reminders =
                                                 snapshot2.result.children.mapNotNull { doc ->
-                                                    doc.getValue(ReminderDTO::class.java)
+                                                    doc.getValue(EventReminderDTO::class.java)
                                                 }
 
                                             reminders.forEach { reminder ->

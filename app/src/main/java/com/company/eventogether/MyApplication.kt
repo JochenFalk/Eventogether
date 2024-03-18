@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.content.ContextCompat
 import com.company.eventogether.helpclasses.reminders.AlarmReceiver
+import com.company.eventogether.koin.koinExpandableListAdapter
 import com.company.eventogether.koin.koinControllers
 import com.company.eventogether.koin.koinHelpers
 import com.company.eventogether.koin.koinRepositories
@@ -25,7 +26,8 @@ class MyApplication : Application() {
                 koinHelpers,
                 koinViews,
                 koinControllers,
-                koinRepositories
+                koinRepositories,
+                koinExpandableListAdapter
             )
         }
 

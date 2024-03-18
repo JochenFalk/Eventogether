@@ -142,4 +142,10 @@ object Tools {
         }
         return outputString
     }
+
+    fun extractUrlFromString(input: String): String? {
+        val regex = Regex("""\bhttps?://\S+\b""")
+        val matchResult = regex.find(input)
+        return matchResult?.value
+    }
 }

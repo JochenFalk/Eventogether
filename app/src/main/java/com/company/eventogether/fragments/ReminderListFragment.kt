@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.company.eventogether.adapters.ReminderListAdapter
 import com.company.eventogether.databinding.FragmentRemindersBinding
 import com.company.eventogether.model.EventDTO
-import com.company.eventogether.model.ReminderDTO
+import com.company.eventogether.model.EventReminderDTO
 import com.company.eventogether.viewmodels.EventViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
@@ -56,7 +56,7 @@ class ReminderListFragment : Fragment() {
             eventViewModel.createReminder(
                 requireActivity(),
                 event,
-                ReminderDTO(
+                EventReminderDTO(
                     fbKey = null,
                     position = -1,
                     timeString = "HH:MM",

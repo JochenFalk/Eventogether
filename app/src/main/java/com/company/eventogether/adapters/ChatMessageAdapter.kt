@@ -126,7 +126,7 @@ class ChatMessageAdapter(private val currentUserName: String, private val option
                     binding.messengerTextViewSender.isVisible = false
                     ""
                 } else {
-                    stringResourcesProvider.getString(R.string.greeting_message_text)
+                    stringResourcesProvider.getStringByResId(R.string.greeting_message_text)
                 }
 
                 binding.messageTextViewSender.text = messageText

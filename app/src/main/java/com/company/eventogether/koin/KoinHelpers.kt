@@ -14,10 +14,15 @@ val koinHelpers = module {
     single {
         StringResourcesProvider(get())
     }
-    single {
-        ExpandableListAdapter()
-    }
+
     single {
         RemindersManager()
+    }
+}
+
+val koinExpandableListAdapter = module {
+
+    factory { (callback: (String) -> Unit) ->
+        ExpandableListAdapter(callback)
     }
 }

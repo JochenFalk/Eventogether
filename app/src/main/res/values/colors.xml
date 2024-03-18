@@ -15,4 +15,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#C4C4C5</color>
     <color name="grey_faded">#CCC4C4C5</color>
+    <color name="link_color">#1E6B84</color>
 </resources>

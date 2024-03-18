@@ -19,39 +19,47 @@ enum class EventVisibility {
 
 data class EventDTO(
     var fbKey: String? = null,
-    val info: InfoDTO? = null,
-    val links: LinksDTO? = null,
-    val metadata: MetaDataDTO? = null,
+    val info: EventInfoDTO? = null,
+    val metadata: EventMetaDataDTO? = null,
     val followers: ArrayList<String>? = ArrayList(),
     val messages: ArrayList<ChatMessageDTO>? = ArrayList(),
-    val reminders: ArrayList<ReminderDTO>? = ArrayList(),
-    val listGroups: ArrayList<ListGroup>? = ArrayList(),
+    val reminders: ArrayList<EventReminderDTO>? = ArrayList(),
+    var expandableLists: ArrayList<EventExpandableGroup>? = ArrayList(),
 ) : Serializable
 
-data class InfoDTO(
+data class EventInfoDTO(
     val title: String? = null,
     val description: String? = null,
-    val location: LocationDTO? = null,
     val timeInMillis: Long? = null,
     val timeString: String? = null,
-    val venue: Venue? = null
+    val address: List<String?>? = null,
+    val ticketInfo: List<TicketInfo?>? = null,
+    val venue: EventVenue? = null,
+    val thumbnailUrl: String? = null,
+    val links: EventLinks? = null
 ) : Serializable
 
-data class LinksDTO(
+data class EventVenue(
+    val name: String? = null,
+    val rating: Double? = null,
+    val reviews: Int? = null,
+    val thumbnailUrl: String? = null
+) : Serializable
+
+data class EventLinks(
     val eventLink: String? = null,
-    val eventImageUrl: String? = null,
-    val eventThumbnailUrl: String? = null,
-    val ticketUrl: String? = null
+    val eventMapsUrl: String? = null,
+    val eventMapsThumbnailUrl: String? = null
 ) : Serializable
 
-data class MetaDataDTO(
+data class EventMetaDataDTO(
     val owner: String? = null,
     val visibility: EventVisibility? = null,
     val eventType: EventType? = null,
     val creationTimeInMillis: Long? = null
 ) : Serializable
 
-data class ReminderDTO(
+data class EventReminderDTO(
     var fbKey: String? = null,
     var position: Int? = -1,
     var timeString: String? = "HH:MM",
@@ -59,7 +67,7 @@ data class ReminderDTO(
     var isActive: Boolean? = true
 ) : Serializable
 
-data class ListGroup(
-    var title: String? = null,
-    var items: ArrayList<Any>? = ArrayList()
+data class EventExpandableGroup(
+    var groupTitle: String? = null,
+    var groupItems: ArrayList<Any>? = null
 ) : Serializable

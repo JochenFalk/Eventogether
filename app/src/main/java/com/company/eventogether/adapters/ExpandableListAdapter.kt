@@ -1,31 +1,153 @@
 package com.company.eventogether.adapters
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.company.eventogether.AppSettings.TICKET_PROVIDERS
+import com.company.eventogether.R
 import com.company.eventogether.databinding.ListGroupBinding
 import com.company.eventogether.databinding.ListItemBinding
-import com.company.eventogether.model.ListGroup
+import com.company.eventogether.helpclasses.StringResourcesProvider
+import com.company.eventogether.helpclasses.Tools
+import com.company.eventogether.model.EventExpandableGroup
+import org.koin.java.KoinJavaComponent
 import pokercc.android.expandablerecyclerview.ExpandableAdapter
 
-class ExpandableListAdapter : ExpandableAdapter<ExpandableAdapter.ViewHolder>() {
+class ExpandableListAdapter(private val callback: (String) -> Unit) :
+    ExpandableAdapter<ExpandableAdapter.ViewHolder>() {
 
-    var listGroups = ArrayList<ListGroup>()
+    var expandableList = ArrayList<EventExpandableGroup>()
 
     private class GroupViewHolder(val listGroupBinding: ListGroupBinding) :
-        ExpandableAdapter.ViewHolder(listGroupBinding.root)
+        ViewHolder(listGroupBinding.root) {
+        fun bind(group: EventExpandableGroup) {
+            listGroupBinding.textViewGroupTitle.text = group.groupTitle
+        }
+    }
 
-    private class ItemViewHolder(val listItemBinding: ListItemBinding) :
-        ExpandableAdapter.ViewHolder(listItemBinding.root)
+    private class ItemViewHolder(
+        private val listItemBinding: ListItemBinding,
+        private val callback: (String) -> Unit
+    ) :
+        ViewHolder(listItemBinding.root) {
+
+        val stringResourcesProvider: StringResourcesProvider by KoinJavaComponent.inject(
+            StringResourcesProvider::class.java
+        )
+        val group1CustomText =
+            stringResourcesProvider.getStringByName("event_expandable_list_group1_custom_text")
+        val group2CustomText =
+            stringResourcesProvider.getStringByName("event_expandable_list_group2_custom_text")
+        val group3CustomText =
+            stringResourcesProvider.getStringByName("event_expandable_list_group3_custom_text")
+
+        fun bind(groupItems: ArrayList<Any>?, groupPosition: Int, childPosition: Int) {
+
+            if (groupItems != null) {
+                with(listItemBinding.textViewItem) {
+
+                    when (groupPosition) {
+
+                        0 -> {
+                            when (childPosition) {
+
+                                0 -> {
+                                    text = groupItems[childPosition].toString()
+                                    setOnClickListener(null)
+                                }
+
+                                1 -> {
+                                    text = group1CustomText
+                                    setTextColor(stringResourcesProvider.getColor(R.color.link_color))
+                                    setOnClickListener {
+                                        Tools.extractUrlFromString(groupItems[childPosition].toString())
+                                            ?.let { url -> callback(url) }
+                                    }
+                                }
+                            }
+                        }
+
+                        1 -> {
+
+                            when (childPosition) {
+
+                                0 -> {
+                                    text = groupItems[childPosition].toString()
+                                }
+
+                                1 -> {
+                                    val parts =
+                                        groupItems[childPosition].toString().split("\\s+".toRegex())
+
+                                    if (parts.size == 2) {
+                                        val firstThreeElements =
+                                            parts.subList(0, 1).joinToString(separator = " ")
+                                        val remainingElements =
+                                            parts.subList(1, parts.size)
+                                                .joinToString(separator = " ")
+                                        val textStringParsed =
+                                            "$group2CustomText $firstThreeElements ($remainingElements)"
+
+                                        text = textStringParsed
+                                    }
+                                }
+
+                                2 -> {
+                                    text = groupItems[childPosition].toString()
+                                }
+                            }
+
+                            setTextColor(stringResourcesProvider.getColor(R.color.dark_blue_faded))
+                            setOnClickListener(null)
+                        }
+
+                        2 -> {
+
+                            when (childPosition) {
+
+                                0 -> {
+                                    text = group3CustomText
+                                    setTextColor(stringResourcesProvider.getColor(R.color.dark_blue_faded))
+                                    setOnClickListener(null)
+                                }
+
+                                else -> {
+
+                                    TICKET_PROVIDERS.forEach { provider ->
+
+                                        if (groupItems[childPosition - 1].toString()
+                                                .startsWith(provider)
+                                        ) {
+
+                                            text = provider
+                                            setTextColor(stringResourcesProvider.getColor(R.color.link_color))
+                                            setOnClickListener {
+                                                Tools.extractUrlFromString(groupItems[childPosition - 1].toString())
+                                                    ?.let { url -> callback(url) }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun getChildCount(groupPosition: Int): Int {
-        return listGroups[groupPosition].items?.size ?: 0
+
+        return if (groupPosition == 2) {
+            (expandableList[groupPosition].groupItems?.size ?: 0) + 1
+        } else {
+            expandableList[groupPosition].groupItems?.size ?: 0
+        }
     }
 
     override fun getGroupCount(): Int {
-        return listGroups.size
+        return expandableList.size
     }
 
     override fun onBindChildViewHolder(
@@ -34,11 +156,9 @@ class ExpandableListAdapter : ExpandableAdapter<ExpandableAdapter.ViewHolder>() 
         childPosition: Int,
         payloads: List<Any>
     ) {
-        val item = listGroups[groupPosition].items?.get(childPosition)
         if (payloads.isEmpty()) {
-            (holder as? ItemViewHolder)?.apply {
-                listItemBinding.textViewItem.text = item.toString()
-            }
+            val groupItems = expandableList[groupPosition].groupItems
+            (holder as? ItemViewHolder)?.bind(groupItems, groupPosition, childPosition)
         }
     }
 
@@ -48,17 +168,17 @@ class ExpandableListAdapter : ExpandableAdapter<ExpandableAdapter.ViewHolder>() 
         expand: Boolean,
         payloads: List<Any>
     ) {
-        val group = listGroups[groupPosition]
         if (payloads.isEmpty()) {
-            (holder as? GroupViewHolder)?.apply {
-                listGroupBinding.textViewGroupTitle.text = group.title
-            }
+            val group = expandableList[groupPosition]
+            (holder as? GroupViewHolder)?.bind(group)
         }
     }
 
     override fun onCreateChildViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
-        return ItemViewHolder(ListItemBinding.inflate(inflater, viewGroup, false))
+        return ItemViewHolder(ListItemBinding.inflate(inflater, viewGroup, false)) { url ->
+            callback(url)
+        }
     }
 
     override fun onCreateGroupViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {

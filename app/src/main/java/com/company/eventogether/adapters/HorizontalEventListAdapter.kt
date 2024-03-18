@@ -26,7 +26,7 @@ class HorizontalEventListAdapter(private val viewModel: EventViewModel) :
             }
             binding.eventTitle.isSelected = true
 
-            setEventImage(binding.eventImage, event.links?.eventImageUrl)
+            setEventImage(binding.eventImage, event.info?.thumbnailUrl)
         }
     }
 

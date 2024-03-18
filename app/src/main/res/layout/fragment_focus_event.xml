@@ -12,7 +12,7 @@
 
         <variable
             name="reminder"
-            type="com.company.eventogether.model.ReminderDTO" />
+            type="com.company.eventogether.model.EventReminderDTO" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -82,7 +82,7 @@
                 android:textStyle="normal|bold" />
 
             <TextView
-                android:id="@+id/eventDescription"
+                android:id="@+id/eventTimeString"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -90,7 +90,7 @@
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/calibri"
                 android:gravity="top|start"
-                android:text="@{event.info.description}"
+                android:text="@{event.info.timeString}"
                 android:textColor="@color/dark_blue"
                 android:textSize="18sp"
                 android:textStyle="normal"

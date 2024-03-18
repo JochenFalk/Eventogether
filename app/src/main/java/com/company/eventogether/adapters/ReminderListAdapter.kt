@@ -6,21 +6,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.company.eventogether.R
 import com.company.eventogether.databinding.CardDesignRemindersBinding
 import com.company.eventogether.helpclasses.StringResourcesProvider
-import com.company.eventogether.model.ReminderDTO
+import com.company.eventogether.model.EventReminderDTO
 import com.company.eventogether.viewmodels.EventViewModel
 import org.koin.java.KoinJavaComponent.inject
 
 class ReminderListAdapter(private val eventViewModel: EventViewModel) :
     RecyclerView.Adapter<ReminderListAdapter.ReminderViewHolder>() {
 
-    var reminderList = ArrayList<ReminderDTO>()
-
+    var reminderList = ArrayList<EventReminderDTO>()
     val stringResourcesProvider: StringResourcesProvider by inject(StringResourcesProvider::class.java)
 
     inner class ReminderViewHolder(private val binding: CardDesignRemindersBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(reminder: ReminderDTO) {
+        fun bind(reminder: EventReminderDTO) {
 
             binding.reminder = reminder
 
@@ -28,7 +27,7 @@ class ReminderListAdapter(private val eventViewModel: EventViewModel) :
 
             binding.reminderTime.setOnClickListener {
                 eventViewModel.addReminderObservable.value =
-                    ReminderDTO(
+                    EventReminderDTO(
                         position = reminder.position,
                         timeString = "HH:MM",
                         isRecurring = binding.switchRecurring.isChecked
@@ -45,14 +44,19 @@ class ReminderListAdapter(private val eventViewModel: EventViewModel) :
 
                 eventViewModel.updateReminderObservable.value =
 
-                    ReminderDTO(
+                    EventReminderDTO(
                         fbKey = reminder.fbKey,
                         position = reminder.position,
                         timeString = reminder.timeString,
                         isRecurring = isChecked,
                         isActive = when (reminder.isActive == true) {
-                            true -> { reminder.isActive }
-                            false -> { isChecked }
+                            true -> {
+                                reminder.isActive
+                            }
+
+                            false -> {
+                                isChecked
+                            }
                         }
                     )
             }
@@ -66,6 +70,7 @@ class ReminderListAdapter(private val eventViewModel: EventViewModel) :
                         stringResourcesProvider.getColor(R.color.dark_blue)
                     )
                 }
+
                 false -> {
                     binding.reminderTime.setTextColor(
                         stringResourcesProvider.getColor(R.color.dark_blue_faded)

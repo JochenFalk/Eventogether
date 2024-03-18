@@ -43,8 +43,8 @@ class EventListAdapter(private val viewModel: EventViewModel) :
 
     private fun setEventImage(imageView: ImageView, event: EventDTO) {
 
-        val eventImageUrl = event.links?.eventImageUrl
-        val venueImageUrl = event.info?.venue?.link
+        val eventImageUrl = event.info?.thumbnailUrl
+        val venueImageUrl = event.info?.venue?.thumbnailUrl
 
         if (eventImageUrl != null) {
             Glide.with(imageView.context)

@@ -60,4 +60,7 @@
     <string name="text_continue">Continue</string>
     <string name="text_event">Event name</string>
     <string name="text_event_type">Event type</string>
+    <string name="event_expandable_list_group1_custom_text">Meer informatie</string>
+    <string name="event_expandable_list_group2_custom_text">Rating:</string>
+    <string name="event_expandable_list_group3_custom_text">Tickets zijn beschikbaar via:</string>
 </resources>

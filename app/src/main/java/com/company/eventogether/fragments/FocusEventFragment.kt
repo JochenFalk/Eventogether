@@ -1,5 +1,7 @@
 package com.company.eventogether.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,8 +11,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.company.eventogether.R
@@ -20,6 +20,7 @@ import com.company.eventogether.model.EventDTO
 import com.company.eventogether.viewmodels.EventViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.core.parameter.parametersOf
 import pokercc.android.expandablerecyclerview.ExpandableRecyclerView
 
 class FocusEventFragment : Fragment() {
@@ -30,7 +31,13 @@ class FocusEventFragment : Fragment() {
     private lateinit var event: EventDTO
 
     private val eventViewModel: EventViewModel by activityViewModel()
-    private val adapter: ExpandableListAdapter by inject()
+    private val callback: (String) -> Unit = { url ->
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
+    }
+    private val adapter: ExpandableListAdapter by inject {
+        parametersOf(callback)
+    }
 
     companion object {
         private const val TAG = "FocusEventFragment"
@@ -42,6 +49,7 @@ class FocusEventFragment : Fragment() {
     ): View {
         event = arguments?.getSerializable("Event") as EventDTO
         binding = FragmentFocusEventBinding.inflate(inflater, container, false)
+        binding.event = event
         Log.d(TAG, "Event loaded: $event")
         return binding.root
     }
@@ -63,16 +71,6 @@ class FocusEventFragment : Fragment() {
         listView.layoutManager = manager
         listView.adapter = adapter.apply {
             onlyOneGroupExpand = true
-//            this.listGroups = event.listGroups!!
-        }
-
-        binding.event = event
-
-        binding.btnDelete.setOnClickListener {
-            eventViewModel.deleteEvent(
-                requireActivity(),
-                event
-            )
         }
 
         binding.switchRecurring.setOnClickListener {
@@ -80,16 +78,17 @@ class FocusEventFragment : Fragment() {
         }
 
         setObservers()
-        setEventImage(binding.eventImage, event.links?.eventImageUrl)
+        setEventImage(binding.eventImage, event.info?.thumbnailUrl)
     }
 
     private fun setObservers() {
 
         eventViewModel.eventObservable.observe(viewLifecycleOwner) { event ->
 
-            if (event?.listGroups != null) {
-                adapter.listGroups.clear()
-                adapter.listGroups.addAll(event.listGroups)
+            if (event?.expandableLists != null) {
+                adapter.expandableList.clear()
+                adapter.expandableList.addAll(event.expandableLists!!)
+                adapter.expandGroup(0, false)
             }
         }
 
@@ -116,29 +115,6 @@ class FocusEventFragment : Fragment() {
                 .into(imageView)
         } else {
             imageView.setImageResource(R.drawable.friends_running_down_hill_outdoor_field)
-        }
-    }
-
-    private fun callReminderListFragment() {
-
-        val fragmentManager: FragmentManager = parentFragmentManager
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        val reminderListFragment = ReminderListFragment().apply {
-            val bundle = Bundle()
-            bundle.putSerializable("Event", event)
-            this.arguments = bundle
-        }
-
-        fragmentTransaction.replace(R.id.frame, reminderListFragment).addToBackStack(null)
-        fragmentTransaction.commit()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if ((event.listGroups?.size ?: 0) != 0) {
-            adapter.collapseAllGroup()
-//            adapter.expandGroup(0, false)
         }
     }
 }

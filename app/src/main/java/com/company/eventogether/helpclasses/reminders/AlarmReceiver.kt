@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import com.company.eventogether.R
 import com.company.eventogether.activities.EventActivity
 import com.company.eventogether.helpclasses.Tools.getLocalTimeStringHHMM
-import com.company.eventogether.model.ReminderDTO
+import com.company.eventogether.model.EventReminderDTO
 import com.company.eventogether.viewmodels.EventViewModel
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
@@ -78,7 +78,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 eventViewModel.updateReminder(
                     context = null,
                     event = null,
-                    reminder = ReminderDTO(
+                    reminder = EventReminderDTO(
                         fbKey = fbKey,
                         position = -1,
                         timeString = getLocalTimeStringHHMM(calendar.timeInMillis),
