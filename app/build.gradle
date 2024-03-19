@@ -10,12 +10,12 @@ apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
     namespace "com.company.eventogether"
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.company.eventogether"
-        minSdk 26
-        targetSdk 32
+        minSdk 28
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 

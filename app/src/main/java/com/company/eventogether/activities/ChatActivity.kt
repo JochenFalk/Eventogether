@@ -1,8 +1,10 @@
 package com.company.eventogether.activities
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.MediaStore
@@ -156,7 +158,7 @@ class ChatActivity : AppCompatActivity() {
     private fun setCameraPermissions() {
         val permissions = ContextCompat.checkSelfPermission(
             this,
-            android.Manifest.permission.CAMERA
+            Manifest.permission.CAMERA
         )
         if (permissions != PackageManager.PERMISSION_GRANTED) {
             makePermissionsRequest()
@@ -168,7 +170,7 @@ class ChatActivity : AppCompatActivity() {
     private fun makePermissionsRequest() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(android.Manifest.permission.CAMERA),
+            arrayOf(Manifest.permission.CAMERA),
             1
         )
     }
